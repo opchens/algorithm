@@ -17,17 +17,25 @@ func main() {
 }
 
 func reverseList(head *ListNode) *ListNode {
-	return reverse(head)
+	var pre, cur, nxt *ListNode
+	pre, cur, nxt = nil, head, head.Next
+	for head != nil {
+		cur.Next = pre
+		pre = cur
+		cur = nxt
+		if nxt != nil {
+			nxt = nxt.Next
+		}
+	}
+	return pre
 }
 
-func reverse(p *ListNode) *ListNode {
-	fmt.Println(p)
-	if p == nil || p.Next == nil {
-		return p
+func ReverseList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
 	}
-	j := reverse(p.Next)
-	p.Next.Next = p
-	p.Next = nil
-
-	return j
+	last := ReverseList(head.Next)
+	head.Next.Next = head
+	head.Next = nil
+	return last
 }
