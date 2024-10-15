@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 // 滑动窗口
 // 当移动right 扩大窗口，即加入字符时， 应该更新那些数据？
@@ -9,49 +12,50 @@ import "fmt"
 // 我们要的结果应该在扩大窗口时还是缩小窗口时进行更新
 
 func main() {
-	fmt.Println(minWindows("s", "sade"))
+	need := make(map[byte]int)
+	need['s'] = 1
+	need['a'] = 2
+	fmt.Println(math.MaxInt32)
 }
 
-func minWindows(s, t string) string {
-	destCount := [128]int{}
-	for _, v := range t {
-		destCount[v]++
+func minWindow(s, t string) string {
+	need, windows := make(map[byte]int), make(map[byte]int)
+	for i := range t {
+		need[t[i]]++
 	}
 
-	curCount := [128]int{}
-	deffer := len(t)
-
-	minIdx, minLen := -1, len(s)+1
-	left := 0
-	for right := 0; right < len(s); right++ {
-		if destCount[s[right]] < 1 {
-			continue
+	left, right := 0, 0
+	start, length := 0, math.MaxInt32
+	valid := 0
+	for right < len(s) {
+		c := s[right]
+		right++
+		if _, ok := need[c]; ok {
+			windows[c]++
+			if windows[c] == need[c] {
+				valid++
+			}
 		}
-		curCount[s[right]]++
 
-		if curCount[s[right]] <= destCount[s[right]] {
-			deffer--
-		}
-		if deffer == 0 {
-			if destCount[s[left]] == 0 {
-				left++
-				continue
+		for valid == len(need) {
+			if right-left < length {
+				start = left
+				length = right - left
 			}
-			curLen := right - left + 1
-			if curLen < minLen {
-				minLen = curLen
-				minIdx = left
-			}
-			if curCount[s[left]] < destCount[s[left]] {
-				deffer++
-			}
+			d := s[left]
 			left++
+			if _, ok := need[d]; ok {
+				if windows[d] == need[d] {
+					valid--
+				}
+				windows[d]--
+			}
 		}
+
 	}
-	if minIdx == -1 {
+	if length == math.MaxInt32 {
 		return ""
 	}
-
-	return s[minIdx : minIdx+minLen]
+	return s[start : start+length]
 
 }
