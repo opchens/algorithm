@@ -8,21 +8,24 @@ type Node struct {
 }
 
 func connect(root *Node) *Node {
-	pre := []*Node{}
-	var dfs func(*Node, int)
-	dfs = func(node *Node, depth int) {
-		if node == nil {
-			return
-		}
-		if depth == len(pre) {
-			pre = append(pre, node)
-		} else {
-			pre[depth].Next = node
-			pre[depth] = node
-		}
-		dfs(node.Left, depth+1)
-		dfs(node.Right, depth+1)
+	if root == nil {
+		return nil
 	}
-	dfs(root, 0)
+
+	traverse(root.Left, root.Right)
+
 	return root
+}
+
+func traverse(node1, node2 *Node) {
+	if node1 == nil || node2 == nil {
+		return
+	}
+
+	node1.Next = node2
+
+	traverse(node1.Left, node1.Right)
+	traverse(node1.Right, node2.Left)
+	traverse(node2.Left, node2.Right)
+
 }

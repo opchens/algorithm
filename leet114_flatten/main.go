@@ -7,19 +7,21 @@ type TreeNode struct {
 }
 
 func flatten(root *TreeNode) {
-	list := preorderTraversal(root)
-	for i := 1; i < len(list); i++ {
-		prev, curr := list[i-1], list[i]
-		prev.Left, prev.Right = nil, curr
+	if root == nil {
+		return
 	}
-}
+	flatten(root.Left)
+	flatten(root.Right)
 
-func preorderTraversal(root *TreeNode) []*TreeNode {
-	list := []*TreeNode{}
-	if root != nil {
-		list = append(list, root)
-		list = append(list, preorderTraversal(root.Left)...)
-		list = append(list, preorderTraversal(root.Right)...)
+	left := root.Left
+	right := root.Right
+
+	root.Left = nil
+	root.Right = left
+
+	p := root
+	for p.Right != nil {
+		p = p.Right
 	}
-	return list
+	p.Right = right
 }
